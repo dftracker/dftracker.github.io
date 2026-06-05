@@ -152,10 +152,20 @@
       color: #7c3aed;
     }
 
+    .btn-label { flex: 1; }
+
     .btn-title {
       font-size: 15px;
       font-weight: 700;
-      flex: 1;
+      display: block;
+    }
+
+    .btn-sub {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.65;
+      margin-top: 2px;
+      display: block;
     }
 
     .btn-arrow {
@@ -196,13 +206,19 @@
     <div class="steps">
       <a class="btn btn-primary" href="https://groups.google.com/g/df-tracker" target="_blank">
         <div class="btn-badge">1</div>
-        <span class="btn-title">เข้าร่วมกลุ่มทดสอบ</span>
+        <div class="btn-label">
+          <span class="btn-title">เข้าร่วมกลุ่มทดสอบ</span>
+          <span class="btn-sub">กด "Join group" แล้วกลับมากดข้อ 2</span>
+        </div>
         <span class="btn-arrow">›</span>
       </a>
 
       <a class="btn btn-secondary" href="https://play.google.com/apps/testing/th.co.dftracker" target="_blank">
         <div class="btn-badge">2</div>
-        <span class="btn-title">ดาวน์โหลดบน Google Play</span>
+        <div class="btn-label">
+          <span class="btn-title">ดาวน์โหลดบน Google Play</span>
+          <span class="btn-sub">กด "Become a tester" แล้วติดตั้ง</span>
+        </div>
         <span class="btn-arrow">›</span>
       </a>
     </div>
