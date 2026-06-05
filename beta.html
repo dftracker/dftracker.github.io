@@ -174,6 +174,43 @@
       margin-left: 8px;
     }
 
+    /* Backup info */
+    .backup-info {
+      width: 100%;
+      max-width: 360px;
+      background: #f5f3ff;
+      border: 1.5px solid #ede9fe;
+      border-radius: 13px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .backup-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .backup-text {
+      flex: 1;
+    }
+
+    .backup-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7c3aed;
+      margin-bottom: 3px;
+    }
+
+    .backup-desc {
+      font-size: 12px;
+      color: #6b5b8a;
+      line-height: 1.6;
+    }
+
     /* Warning */
     .warning {
       width: 100%;
@@ -223,6 +260,14 @@
       </a>
     </div>
 
+  </div>
+
+  <div class="backup-info">
+    <div class="backup-icon">☁️</div>
+    <div class="backup-text">
+      <div class="backup-title">ข้อมูลไม่หาย เมื่อแอพเปิดตัวจริง</div>
+      <div class="backup-desc">ตั้งค่า → Backup บน Drive ส่วนตัว → แอพจริงออก restore</div>
+    </div>
   </div>
 
   <p class="warning">⚠️ ต้อง login Google Play ด้วย Gmail เดียวกับที่กด Join กลุ่ม ไม่งั้นโหลดไม่ได้</p>
