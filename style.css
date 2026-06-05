@@ -35,11 +35,8 @@ header.brand .logo {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--accent);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
+  object-fit: cover;
+  display: block;
 }
 
 header.brand .name {
