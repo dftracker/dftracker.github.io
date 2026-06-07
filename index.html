@@ -27,6 +27,7 @@
     --accent2: #FF7AB6;
     --bg1: #F5F0FF;
     --bg2: #FFF0F6;
+    --fade: #FAF0FA; /* ≈ สี bg ตรงแถว marquee — ใช้ทำขอบจางแทน mask */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html {
@@ -71,16 +72,21 @@
   .showcase { display: flex; flex-direction: column; gap: 0; flex: 0 1 auto; min-height: 0; }
   /* label ชิดแถวของตัวเอง (mb 4) · เว้นจากแถวก่อนหน้าเยอะ (mt 15) → จับกลุ่มชัด */
   .row-label { flex: 0 0 auto; font-size: 11px; font-weight: 600; color: var(--ink-soft); margin: 0 0 4px 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .row-label .lic { font-family: 'Material Symbols Rounded'; font-size: 15px; line-height: 1; vertical-align: -3px; margin-right: 4px; }
+  .row-label .lpng { display: inline-block; width: 15px; height: 15px; vertical-align: -3px; margin-right: 5px; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; }
   .marquee + .row-label { margin-top: 15px; }
   /* แต่ละแถวกินพื้นที่ที่เหลือเท่ากัน → tile ยืดเต็มเอง ไม่มีช่องโบ๋/ไม่ตัด */
-  .marquee { flex: 0 1 auto; height: clamp(100px, 14vh, 136px); min-height: 0; display: flex; align-items: stretch; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-  .mtrack { display: flex; align-items: center; gap: 10px; height: 100%; width: max-content; will-change: transform; }
+  .marquee { position: relative; flex: 0 1 auto; height: clamp(100px, 14vh, 136px); min-height: 0; display: flex; align-items: stretch; overflow: hidden; }
+  /* ขอบจางด้วย overlay นิ่ง (แทน mask) → track เป็น pure composited layer ไม่ re-raster ตอนวนรอบ */
+  .marquee::before, .marquee::after { content: ''; position: absolute; top: 0; bottom: 0; width: 8%; z-index: 2; pointer-events: none; }
+  .marquee::before { left: 0; background: linear-gradient(to right, var(--fade), rgba(250,240,250,0)); }
+  .marquee::after { right: 0; background: linear-gradient(to left, var(--fade), rgba(250,240,250,0)); }
+  .mtrack { display: flex; align-items: center; gap: 10px; height: 100%; width: max-content; will-change: transform; backface-visibility: hidden; }
   /* px/วิ เท่ากัน: char track ยาว 2.5× ของ item → duration 2.5× · สวนทางกัน */
   .mtrack.items { animation: scroll-l 20s linear infinite; }
   .mtrack.chars { animation: scroll-r 50s linear infinite; }
-  @keyframes scroll-l { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @keyframes scroll-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+  /* fallback ตอน JS ไม่รัน — JS จะ override ด้วย keyframes ที่เป็น px ตายตัว (compositor-friendly) */
+  @keyframes scroll-l { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+  @keyframes scroll-r { from { transform: translate3d(-50%,0,0); } to { transform: translate3d(0,0,0); } }
   .tile { height: 100%; flex: 0 0 auto; border-radius: 16px; padding: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 14px rgba(26,43,60,0.10); }
   .tile.char, .tile.item { aspect-ratio: 1 / 1; }
   .tile img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.12)); }
@@ -133,9 +139,9 @@
 
   <!-- ===== Showcase: 2 marquee rows (auto-slide, no controls) ===== -->
   <div class="showcase">
-    <div class="row-label"><span class="lic" style="color:var(--accent2)">auto_awesome</span>ไอเท็มวิเศษ · เล่น quiz เพื่อค้นหาไอเท็มวิเศษประจำตัวคุณ</div>
+    <div class="row-label"><span class="lpng" style="-webkit-mask-image:url('landing_assets/label-item.png'); mask-image:url('landing_assets/label-item.png'); background:var(--accent2)"></span>ไอเท็มวิเศษ · เล่น quiz เพื่อค้นหาไอเท็มวิเศษประจำตัวคุณ</div>
     <div class="marquee"><div class="mtrack items" id="track-items"></div></div>
-    <div class="row-label"><span class="lic" style="color:var(--accent)">style</span>ตัวละครประจำวัน · บันทึกเคสแล้วมาดูกันว่าวันนี้คุณเป็นหมอแบบไหม</div>
+    <div class="row-label"><span class="lpng" style="-webkit-mask-image:url('landing_assets/label-char.png'); mask-image:url('landing_assets/label-char.png'); background:var(--accent2)"></span>ตัวละครประจำวัน · บันทึกเคสแล้วมาดูกันว่าวันนี้คุณเป็นหมอแบบไหม</div>
     <div class="marquee"><div class="mtrack chars" id="track-chars"></div></div>
   </div>
 
@@ -195,14 +201,27 @@
 
     // ตั้ง duration จาก pixel จริง → ทั้ง 2 แถวเร็วเท่ากันเป๊ะ (70 px/s)
     var PX_PER_SEC = 70;
-    requestAnimationFrame(function () {
-      ['track-chars', 'track-items'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        var half = el.scrollWidth / 2;
-        el.style.animationDuration = (half / PX_PER_SEC).toFixed(2) + 's';
-      });
+    // สร้าง keyframes เป็น "px ตายตัว" (ไม่ใช้ var/%/calc) → animation รันบน compositor (GPU) = ลื่น
+    // ถ้าใช้ var() ใน keyframe เบราว์เซอร์อาจถอด animation ลง main thread → กระตุก
+    // อ่าน offsetLeft = force layout อยู่แล้ว ไม่ต้องรอ rAF (ซึ่งไม่ fire ตอน tab ไม่ visible)
+    var jobs = [], kf = '';
+    [['track-items', 'items', true], ['track-chars', 'chars', false]].forEach(function (cfg) {
+      var el = document.getElementById(cfg[0]);
+      if (!el) return;
+      // ระยะลูปจริง = ตำแหน่งซ้ายของ tile ตัวแรกของชุดสำเนา (นับ gap จริง ไม่พึ่ง %)
+      var dup = el.children[el.children.length / 2];
+      var shift = Math.round(dup ? dup.offsetLeft : el.scrollWidth / 2);
+      var name = 'mq-' + cfg[1];
+      var zero = 'translate3d(0,0,0)', off = 'translate3d(-' + shift + 'px,0,0)';
+      // items เลื่อนซ้าย (0 → -shift) · chars เลื่อนขวา (-shift → 0)
+      kf += '@keyframes ' + name + '{from{transform:' + (cfg[2] ? zero : off) +
+            '}to{transform:' + (cfg[2] ? off : zero) + '}}';
+      jobs.push([el, name, (shift / PX_PER_SEC).toFixed(2)]);
     });
+    var st = document.createElement('style');
+    st.textContent = kf;
+    document.head.appendChild(st);
+    jobs.forEach(function (j) { j[0].style.animation = j[1] + ' ' + j[2] + 's linear infinite'; });
   })();
 </script>
 </body>
