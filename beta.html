@@ -179,27 +179,15 @@
     /* Backup info — inline note ยิงตรงข้อกังวล "แค่ test" แต่คลีน ไม่หนักเท่ากล่อง CTA */
     /* เส้นซ้ายใช้ gradient เดียวกับ .track-line (ม่วง → ลาเวนเดอร์อ่อน) ให้รู้สึกเหมือนเป็นเส้น timeline เดิมที่ไหลต่อลงมา */
     .backup-info {
-      position: relative;
       width: 100%;
       max-width: 360px;
       background: #faf8ff;
       border-radius: 13px;
-      padding: 14px 16px 14px 28px;
+      padding: 14px 16px;
       margin-bottom: 14px;
       display: flex;
       flex-direction: column;
       gap: 5px;
-    }
-
-    .backup-info::before {
-      content: '';
-      position: absolute;
-      left: 4px;
-      top: 14px;
-      bottom: 14px;
-      width: 2px;
-      border-radius: 1px;
-      background: linear-gradient(to bottom, #7c3aed 0%, #ddd6fe 100%);
     }
 
     .backup-head {
